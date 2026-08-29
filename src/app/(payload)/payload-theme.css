@@ -1,0 +1,21 @@
+/* Customizes Payload's look safely without destroying form layouts */
+:root {
+  --theme-bg: #f8fafc;
+  --theme-input-bg: #ffffff;
+  --theme-elevation-100: #ffffff;
+  --theme-elevation-200: #e2e8f0;
+  
+  /* Accent/Primary buttons */
+  --theme-success-500: #2563eb; 
+  
+  /* Font */
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[data-theme='dark'] {
+  --theme-bg: #0f172a;
+  --theme-input-bg: #1e293b;
+  --theme-elevation-100: #1e293b;
+  --theme-elevation-200: #334155;
+  --theme-success-500: #3b82f6;
+}
