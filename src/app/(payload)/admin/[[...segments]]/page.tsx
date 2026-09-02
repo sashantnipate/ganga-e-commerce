@@ -11,10 +11,14 @@ type Args = {
   }>
 }
 
+type RootPageParams = Promise<{ segments: string[] }>
+
+const rootPageParams = (params: Args['params']) => params as RootPageParams
+
 export const generateMetadata = ({ params, searchParams }: Args) =>
   generatePageMetadata({ 
     config: configPromise, 
-    params, 
+    params,
     searchParams 
   })
 
@@ -22,7 +26,7 @@ const Page = ({ params, searchParams }: Args) => (
   <RootPage
     config={configPromise}
     importMap={importMap}
-    params={params}
+    params={rootPageParams(params)}
     searchParams={searchParams}
   />
 )

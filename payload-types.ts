@@ -68,6 +68,8 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    products: Product;
+    media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,6 +78,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -139,6 +143,32 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+export interface Product {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  image: string | Media;
+  name: string;
+  price: number;
+  stock: number;
+  category: 'electronics' | 'clothing' | 'home-kitchen' | 'books' | 'accessories';
+  description?: string | null;
+  collection: 'products';
+}
+export interface Media {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  alt: string;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  collection: 'media';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -230,6 +260,28 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+export interface ProductsSelect<T extends boolean = true> {
+  image?: T;
+  name?: T;
+  price?: T;
+  stock?: T;
+  category?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

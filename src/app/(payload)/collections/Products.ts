@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -43,7 +44,8 @@ export const Products: CollectionConfig = {
     },
     {
       name: 'description',
-      type: 'textarea',
+      type: 'richText',
+      editor: lexicalEditor()
     },
   ],
 }

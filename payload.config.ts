@@ -3,6 +3,13 @@ import { Products } from './src/app/(payload)/collections/Products'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { buildConfig } from 'payload'
 import { s3Storage } from '@payloadcms/storage-s3'
+
+const generateFileURL = ({ filename, prefix }: { filename: string; prefix?: string }) => {
+  const key = prefix ? `${prefix}/${filename}` : filename
+
+  return `${process.env.R2_PUBLIC_URL}/${key}`
+}
+
 export default buildConfig({
   admin: {
     user: 'users',
@@ -24,11 +31,7 @@ export default buildConfig({
       collections: {
         media: {
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => {
-            const key = prefix ? `${prefix}/${filename}` : filename
-
-            return `${process.env.R2_PUBLIC_URL}/${key}`
-          },
+          generateFileURL,
         },
       },
 
@@ -48,7 +51,7 @@ export default buildConfig({
       }
     })
   ],
-  secret: process.env.PAYLOAD_SECRET || 'your-fallback-secret-key-12345',
+  secret: process.env.PAYLOAD_SECRET!,
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || process.env.DATABASE_URL || '',
   }),
