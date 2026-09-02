@@ -1,11 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { SlidersHorizontal, RotateCcw } from "lucide-react"
+import {
+  SlidersHorizontal,
+  RotateCcw,
+  ChevronDown,
+} from "lucide-react"
 
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
 const CATEGORIES = [
@@ -23,25 +25,43 @@ const TAGS = [
   { id: "trending", label: "Trending" },
 ]
 
+type Section = "category" | "price" | "tags" | null
+
 interface FilterSidebarProps {
   totalResults?: number
+  filtersOpen?: boolean
+  onToggleFilters?: () => void
 }
 
-export function FilterSidebar({ totalResults = 132 }: FilterSidebarProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [minPrice, setMinPrice] = useState<string>("")
-  const [maxPrice, setMaxPrice] = useState<string>("")
+export function FilterSidebar({
+  totalResults = 132,
+  filtersOpen = false,
+}: FilterSidebarProps) {
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>([])
+
+  const [selectedTags, setSelectedTags] =
+    useState<string[]>([])
+
+  const [minPrice, setMinPrice] = useState("")
+  const [maxPrice, setMaxPrice] = useState("")
+
+  const [openSection, setOpenSection] =
+    useState<Section>(null)
 
   const handleCategoryToggle = (id: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id]
     )
   }
 
   const handleTagToggle = (id: string) => {
     setSelectedTags((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id]
     )
   }
 
@@ -58,114 +78,284 @@ export function FilterSidebar({ totalResults = 132 }: FilterSidebarProps) {
     (minPrice ? 1 : 0) +
     (maxPrice ? 1 : 0)
 
+  const toggleSection = (section: Section) => {
+    setOpenSection((current) =>
+      current === section ? null : section
+    )
+  }
+
+  /*
+   * Header controls whether the filter system is visible.
+   * When filters are closed, only the compact filter row is shown.
+   */
   return (
-    <div className="w-full space-y-6 bg-transparent pr-2 text-card-foreground">
-      {/* Title Header */}
-      <div className="flex items-center justify-between">
+    <div className="w-full">
+
+      {/* Compact Filter Bar */}
+      <div className="flex min-h-[58px] items-center justify-between border-b">
+
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="size-4 text-foreground" />
-          <h2 className="text-base font-bold tracking-tight">Filters</h2>
+
+          <div className="mr-1 flex items-center gap-2 text-sm font-semibold">
+            <SlidersHorizontal className="size-[16px]" />
+            <span className="hidden sm:inline">
+              Filters
+            </span>
+          </div>
+
+          {/* Category */}
+          <button
+            type="button"
+            onClick={() => toggleSection("category")}
+            className={`flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm transition-colors ${
+              openSection === "category"
+                ? "border-foreground bg-foreground text-background"
+                : "bg-background hover:bg-muted"
+            }`}
+          >
+            Category
+            {selectedCategories.length > 0 && (
+              <span className="text-[11px] opacity-70">
+                {selectedCategories.length}
+              </span>
+            )}
+            <ChevronDown
+              className={`size-3.5 transition-transform ${
+                openSection === "category"
+                  ? "rotate-180"
+                  : ""
+              }`}
+            />
+          </button>
+
+          {/* Price */}
+          <button
+            type="button"
+            onClick={() => toggleSection("price")}
+            className={`flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm transition-colors ${
+              openSection === "price"
+                ? "border-foreground bg-foreground text-background"
+                : "bg-background hover:bg-muted"
+            }`}
+          >
+            Price
+            {(minPrice || maxPrice) && (
+              <span className="text-[11px] opacity-70">
+                1
+              </span>
+            )}
+            <ChevronDown
+              className={`size-3.5 transition-transform ${
+                openSection === "price"
+                  ? "rotate-180"
+                  : ""
+              }`}
+            />
+          </button>
+
+          {/* Tags */}
+          <button
+            type="button"
+            onClick={() => toggleSection("tags")}
+            className={`flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm transition-colors ${
+              openSection === "tags"
+                ? "border-foreground bg-foreground text-background"
+                : "bg-background hover:bg-muted"
+            }`}
+          >
+            Tags
+            {selectedTags.length > 0 && (
+              <span className="text-[11px] opacity-70">
+                {selectedTags.length}
+              </span>
+            )}
+            <ChevronDown
+              className={`size-3.5 transition-transform ${
+                openSection === "tags"
+                  ? "rotate-180"
+                  : ""
+              }`}
+            />
+          </button>
+
+          {/* Reset */}
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="
+                ml-1
+                flex
+                items-center
+                gap-1.5
+                text-xs
+                text-muted-foreground
+                transition-colors
+                hover:text-foreground
+              "
+            >
+              <RotateCcw className="size-3.5" />
+              <span className="hidden sm:inline">
+                Clear
+              </span>
+            </button>
+          )}
         </div>
-        <span className="text-xs text-muted-foreground">{totalResults} results</span>
+
+        <span className="text-xs text-muted-foreground sm:text-sm">
+          {totalResults} results
+        </span>
       </div>
 
-      {/* Category Section */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Category</h3>
-        <div className="space-y-2.5">
-          {CATEGORIES.map((cat) => (
-            <div key={cat.id} className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Checkbox
-                  id={`cat-${cat.id}`}
-                  checked={selectedCategories.includes(cat.id)}
-                  onCheckedChange={() => handleCategoryToggle(cat.id)}
-                />
-                <label
-                  htmlFor={`cat-${cat.id}`}
-                  className="cursor-pointer text-sm leading-none text-foreground/90"
-                >
-                  {cat.label}
-                </label>
+      {/* Expanded Section */}
+      {filtersOpen && openSection && (
+        <div className="border-b bg-muted/20 px-2 py-5 sm:px-4">
+
+          {/* Category */}
+          {openSection === "category" && (
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Category
+              </p>
+
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {CATEGORIES.map((category) => {
+                  const checked =
+                    selectedCategories.includes(category.id)
+
+                  return (
+                    <label
+                      key={category.id}
+                      htmlFor={`category-${category.id}`}
+                      className={`
+                        flex
+                        cursor-pointer
+                        items-center
+                        justify-between
+                        rounded-lg
+                        border
+                        px-3
+                        py-2.5
+                        transition-colors
+                        ${
+                          checked
+                            ? "border-foreground/20 bg-background"
+                            : "bg-background hover:bg-muted"
+                        }
+                      `}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Checkbox
+                          id={`category-${category.id}`}
+                          checked={checked}
+                          onCheckedChange={() =>
+                            handleCategoryToggle(category.id)
+                          }
+                        />
+
+                        <span className="text-sm">
+                          {category.label}
+                        </span>
+                      </div>
+
+                      <span className="text-xs text-muted-foreground">
+                        {category.count}
+                      </span>
+                    </label>
+                  )
+                })}
               </div>
-              <span className="text-xs text-muted-foreground">({cat.count})</span>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
 
-      {/* Price Section */}
-      <div className="space-y-3 pt-1">
-        <h3 className="text-sm font-semibold text-foreground">Price (₹)</h3>
-        
-        <div className="grid grid-cols-2 gap-2">
-          {/* Min Price Input */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">
-              Min Price
-            </label>
-            <div className="relative flex items-center">
-              <span className="absolute left-2.5 text-xs text-muted-foreground font-semibold">₹</span>
-              <Input
-                type="number"
-                placeholder="0"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="h-9 pl-6 pr-2 text-xs"
-              />
+          {/* Price */}
+          {openSection === "price" && (
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Price range
+              </p>
+
+              <div className="flex max-w-[520px] items-center gap-3">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    ₹
+                  </span>
+
+                  <Input
+                    type="number"
+                    placeholder="Minimum"
+                    value={minPrice}
+                    onChange={(e) =>
+                      setMinPrice(e.target.value)
+                    }
+                    className="h-10 rounded-lg bg-background pl-8 shadow-none"
+                  />
+                </div>
+
+                <span className="text-muted-foreground">
+                  —
+                </span>
+
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    ₹
+                  </span>
+
+                  <Input
+                    type="number"
+                    placeholder="Maximum"
+                    value={maxPrice}
+                    onChange={(e) =>
+                      setMaxPrice(e.target.value)
+                    }
+                    className="h-10 rounded-lg bg-background pl-8 shadow-none"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Max Price Input */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-medium text-muted-foreground">
-              Max Price
-            </label>
-            <div className="relative flex items-center">
-              <span className="absolute left-2.5 text-xs text-muted-foreground font-semibold">₹</span>
-              <Input
-                type="number"
-                placeholder="5000"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="h-9 pl-6 pr-2 text-xs"
-              />
+          {/* Tags */}
+          {openSection === "tags" && (
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Tags
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {TAGS.map((tag) => {
+                  const selected =
+                    selectedTags.includes(tag.id)
+
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      onClick={() =>
+                        handleTagToggle(tag.id)
+                      }
+                      className={`
+                        rounded-full
+                        border
+                        px-3.5
+                        py-1.5
+                        text-sm
+                        transition-colors
+                        ${
+                          selected
+                            ? "border-foreground bg-foreground text-background"
+                            : "bg-background hover:bg-muted"
+                        }
+                      `}
+                    >
+                      {tag.label}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
-      </div>
-
-      {/* Tags Section */}
-      <div className="space-y-3 pt-1">
-        <h3 className="text-sm font-semibold text-foreground">Tags</h3>
-        <div className="flex flex-wrap gap-1.5">
-          {TAGS.map((tag) => {
-            const isSelected = selectedTags.includes(tag.id)
-            return (
-              <Badge
-                key={tag.id}
-                variant={isSelected ? "default" : "secondary"}
-                className="cursor-pointer font-normal text-xs transition-colors"
-                onClick={() => handleTagToggle(tag.id)}
-              >
-                {tag.label}
-              </Badge>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Reset Action */}
-      {activeFilterCount > 0 && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleReset}
-          className="w-full justify-center gap-2 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <RotateCcw className="size-3.5" />
-          Reset Filters ({activeFilterCount})
-        </Button>
       )}
     </div>
   )

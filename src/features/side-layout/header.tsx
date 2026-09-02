@@ -3,71 +3,154 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useUser, SignInButton, UserButton } from "@clerk/nextjs"
-import { Search } from "lucide-react"
+import { Search, SlidersHorizontal, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-export function Header() {
+interface HeaderProps {
+  filtersOpen: boolean
+  onToggleFilters: () => void
+}
+
+export function Header({
+  filtersOpen,
+  onToggleFilters,
+}: HeaderProps) {
   const { isLoaded, isSignedIn } = useUser()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      setIsScrolled(window.scrollY > 8)
     }
+
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
   }, [])
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 border-b transition-all duration-200 ${
         isScrolled
-          ? "border-b border-border bg-background/95 backdrop-blur-md shadow-sm"
-          : "bg-background/80 backdrop-blur-sm"
+          ? "bg-background/95 shadow-sm backdrop-blur-md"
+          : "bg-background"
       }`}
     >
-      {/* Reduced px padding and max-width removed to align with screen edges */}
-      <div className="mx-auto flex w-full flex-col gap-3 px-4 py-3 md:grid md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-6">
-        <Link href="/" className="flex items-center gap-3 self-center group">
-          <span className="font-serif text-3xl font-extrabold italic tracking-tight text-foreground normal-case sm:text-4xl">
+      <div className="mx-auto flex h-[72px] w-full items-center gap-5 px-4 sm:px-6">
+
+        {/* Logo */}
+        <Link
+          href="/"
+          className="shrink-0"
+          aria-label="Ganga home"
+        >
+          <span
+            className="
+              font-serif
+              text-[32px]
+              font-bold
+              leading-none
+              tracking-[-0.055em]
+              text-foreground
+            "
+          >
             Ganga
           </span>
         </Link>
 
+        {/* Search */}
         <form
-          className="w-full md:max-w-xl md:justify-self-center"
+          className="mx-auto w-full max-w-[620px]"
           onSubmit={(event) => event.preventDefault()}
         >
           <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              className="
+                pointer-events-none
+                absolute
+                left-3.5
+                top-1/2
+                size-[17px]
+                -translate-y-1/2
+                text-muted-foreground
+              "
+            />
+
             <Input
               aria-label="Search"
-              className="h-10 rounded-full bg-muted/50 pl-10 border-transparent transition-colors focus:bg-background focus:border-input"
               name="search"
-              placeholder="Search..."
+              placeholder="Search products..."
               type="search"
+              className="
+                h-10
+                rounded-full
+                border-transparent
+                bg-muted/50
+                pl-10
+                text-sm
+                shadow-none
+                transition-colors
+                placeholder:text-muted-foreground
+                focus:border-border
+                focus:bg-background
+                focus:ring-1
+                focus:ring-ring/20
+              "
             />
           </div>
         </form>
 
-        <div className="flex items-center justify-start gap-2.5 md:justify-end">
+        {/* Right controls */}
+        <div className="flex shrink-0 items-center gap-2">
+
+          {/* Filter toggle */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onToggleFilters}
+            className="
+              size-9
+              rounded-full
+              text-muted-foreground
+              hover:bg-muted
+              hover:text-foreground
+            "
+            aria-label={
+              filtersOpen ? "Close filters" : "Open filters"
+            }
+          >
+            {filtersOpen ? (
+              <X className="size-[18px]" />
+            ) : (
+              <SlidersHorizontal className="size-[18px]" />
+            )}
+          </Button>
+
+          {/* User */}
           {!isLoaded ? (
-            <Button className="h-10 rounded-full px-5" disabled variant="outline">
+            <Button
+              className="h-9 rounded-full px-4"
+              disabled
+              variant="outline"
+            >
               Loading
             </Button>
           ) : isSignedIn ? (
-            <UserButton 
+            <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "size-10",
+                  avatarBox: "size-9",
                 },
               }}
             />
           ) : (
             <SignInButton mode="modal">
-              <Button className="h-10 rounded-full px-6 shadow-sm">
+              <Button className="h-9 rounded-full px-5">
                 Sign in
               </Button>
             </SignInButton>
