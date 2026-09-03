@@ -8,6 +8,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { AddToCartButton } from '@/features/user-interactions/add-to-cart-button'
+import { OtherProducts } from '@/features/root-page/other-products'
 
 type ProductImage = { url?: string; alt?: string }
 type Product = {
@@ -38,7 +39,7 @@ export default async function ProductDetail({ id }: ProductDetailProps) {
   const image = getImage(product.image)
 
   return (
-    <main className="-mx-4 -mt-6 min-h-screen bg-[#f4eee7] px-6 py-12 text-[#2d241e] sm:-mx-6 sm:px-10 sm:py-16">
+    <main className="-mx-4 -mt-6 min-h-screen bg-[#f4eee7] px-6 py-10 text-[#2d241e] sm:-mx-6 sm:px-10 sm:py-14">
       <div className="mx-auto max-w-6xl">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(360px,1fr)] lg:gap-20">
           <div className="mx-auto w-full max-w-md">
@@ -65,7 +66,9 @@ export default async function ProductDetail({ id }: ProductDetailProps) {
           </div>
         </div>
 
-        <section className="mt-20 border-t border-current/15 pt-10 sm:mt-28 sm:pt-14">
+        <OtherProducts currentProductId={product.id} />
+
+        <section className="mt-16 border-t border-current/15 pt-10 sm:mt-20 sm:pt-12">
           {product.description ? (
             <RichText
               data={product.description}

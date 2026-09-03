@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ArrowUpRight, Package } from 'lucide-react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -10,9 +9,9 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { ProductLink } from '@/features/root-page/product-link'
 
 type ProductImage = { url?: string; alt?: string }
 
@@ -66,15 +65,15 @@ const RootPage = async () => {
       <section id="collection" aria-label="Product collection">
         {bands.length > 0 ? bands.map((band, bandIndex) => (
           <div key={bandIndex} className={`${bandStyles[bandIndex % bandStyles.length]} border-y border-current/10`}>
-            <div className="mx-auto grid max-w-7xl gap-6 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-10 lg:py-20">
+            <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 sm:grid-cols-2 sm:py-10 lg:grid-cols-4 lg:px-10 lg:py-12">
               {band.map((product) => {
                 const image = getImage(product.image)
                 const description = getDescription(product.description)
 
                 return (
-                  <Link key={product.id} href={`/products/${product.id}`} className="group block focus-visible:outline-none">
-                    <Card className="h-full border-current/10 bg-background/75 shadow-none transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl group-focus-visible:ring-2 group-focus-visible:ring-ring">
-                      <div className="px-3 pt-3">
+                  <ProductLink key={product.id} href={`/products/${product.id}`}>
+                    <Card className="h-full overflow-hidden border-current/10 bg-background/80 shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                      <div className="p-3 pb-0">
                         <AspectRatio ratio={4 / 5} className="overflow-hidden rounded-lg bg-muted/60">
                           {image?.url ? (
                             <img src={image.url} alt={image.alt || product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -86,21 +85,21 @@ const RootPage = async () => {
                           <Badge className="absolute left-3 top-3 capitalize" variant="secondary">{formatCategory(product.category)}</Badge>
                         </AspectRatio>
                       </div>
-                      <CardHeader className="gap-2 pb-3">
+                      <CardContent className="space-y-2 p-4">
                         <div className="flex items-start justify-between gap-3">
-                          <CardTitle className="text-lg leading-tight">{product.name}</CardTitle>
+                          <CardTitle className="text-base leading-snug">{product.name}</CardTitle>
                           <span className="shrink-0 text-sm font-semibold">₹{product.price.toLocaleString('en-IN')}</span>
                         </div>
-                        <CardDescription className="line-clamp-2 min-h-10">
+                        <p className="line-clamp-2 min-h-10 text-sm leading-5 text-muted-foreground">
                           {description || 'A considered addition to your everyday.'}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardFooter className="mt-auto justify-between gap-3">
+                        </p>
+                      </CardContent>
+                      <CardFooter className="mt-auto justify-between gap-3 border-t border-current/10 px-4 py-3">
                         <span className="text-xs font-medium text-muted-foreground">{product.stock > 0 ? `${product.stock} available` : 'Out of stock'}</span>
                         <span className="text-sm font-medium transition-transform group-hover:translate-x-1">View item <ArrowUpRight className="ml-1 inline size-4" /></span>
                       </CardFooter>
                     </Card>
-                  </Link>
+                  </ProductLink>
                 )
               })}
             </div>
