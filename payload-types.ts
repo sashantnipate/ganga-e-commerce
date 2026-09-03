@@ -68,6 +68,8 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    customers: Customer;
+    orders: Order;
     products: Product;
     media: Media;
     'payload-kv': PayloadKv;
@@ -78,6 +80,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -169,6 +173,63 @@ export interface Media {
   focalX?: number | null;
   focalY?: number | null;
   collection: 'media';
+}
+export interface CustomerAddress {
+  id?: string | null;
+  label?: string | null;
+  line1: string;
+  line2?: string | null;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+export interface Customer {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  clerkUserId: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  addresses?: CustomerAddress[] | null;
+  collection: 'customers';
+}
+export interface OrderItem {
+  id?: string | null;
+  product: string | Product;
+  productName: string;
+  productImage?: string | Media | null;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+export interface Order {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  orderNumber: string;
+  customer: string | Customer;
+  customerStatus: 'draft' | 'ordered';
+  adminStatus: 'pending' | 'completed' | 'cancelled';
+  cancellationReason?: string | null;
+  inventoryStatus: 'not_reserved' | 'reserved' | 'released';
+  items: OrderItem[];
+  customerSnapshot?: {
+    name: string;
+    email: string;
+    phone?: string | null;
+    shippingAddress?: CustomerAddress | null;
+  } | null;
+  subtotal: number;
+  shipping?: number | null;
+  discount?: number | null;
+  total: number;
+  submittedAt?: string | null;
+  completedAt?: string | null;
+  cancelledAt?: string | null;
+  collection: 'orders';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -280,6 +341,35 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface CustomersSelect<T extends boolean = true> {
+  clerkUserId?: T;
+  email?: T;
+  firstName?: T;
+  lastName?: T;
+  phone?: T;
+  addresses?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  customer?: T;
+  customerStatus?: T;
+  adminStatus?: T;
+  cancellationReason?: T;
+  inventoryStatus?: T;
+  items?: T;
+  customerSnapshot?: T;
+  subtotal?: T;
+  shipping?: T;
+  discount?: T;
+  total?: T;
+  submittedAt?: T;
+  completedAt?: T;
+  cancelledAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

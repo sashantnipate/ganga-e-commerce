@@ -1,4 +1,4 @@
-import { ArrowUpRight, Package } from 'lucide-react'
+import { Package } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import { RichText } from '@payloadcms/richtext-lexical/react'
@@ -6,8 +6,8 @@ import config from '@payload-config'
 
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { AddToCartButton } from '@/features/user-interactions/add-to-cart-button'
 
 type ProductImage = { url?: string; alt?: string }
 type Product = {
@@ -61,9 +61,7 @@ export default async function ProductDetail({ id }: ProductDetailProps) {
               <span className="text-sm text-muted-foreground">{product.stock > 0 ? `${product.stock} available` : 'Currently unavailable'}</span>
             </div>
             <Separator className="bg-current/15" />
-            <Button size="lg" disabled={product.stock === 0} className="w-fit rounded-full px-6">
-              {product.stock > 0 ? 'Add to Cart' : 'Out of stock'} <ArrowUpRight />
-            </Button>
+            <AddToCartButton productId={product.id} product={{ id: product.id, name: product.name, price: product.price, stock: product.stock, image: product.image }} disabled={product.stock === 0} />
           </div>
         </div>
 

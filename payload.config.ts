@@ -1,4 +1,6 @@
 import { Media } from './src/app/(payload)/collections/Media'
+import { Customers } from './src/app/(payload)/collections/Customers'
+import { Orders } from './src/app/(payload)/collections/Orders'
 import { Products } from './src/app/(payload)/collections/Products'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { buildConfig } from 'payload'
@@ -20,6 +22,8 @@ export default buildConfig({
       auth: true,
       fields: [],
     },
+    Customers,
+    Orders,
     Products,
     Media
   ],
