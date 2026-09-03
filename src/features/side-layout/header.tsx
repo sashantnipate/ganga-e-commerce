@@ -7,16 +7,10 @@ import { Search, SlidersHorizontal, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { CartButton } from "@/features/user-interactions/cart-button"
 
-interface HeaderProps {
-  filtersOpen: boolean
-  onToggleFilters: () => void
-}
 
-export function Header({
-  filtersOpen,
-  onToggleFilters,
-}: HeaderProps) {
+export function Header() {
   const { isLoaded, isSignedIn } = useUser()
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -107,29 +101,10 @@ export function Header({
         {/* Right controls */}
         <div className="flex shrink-0 items-center gap-2">
 
-          {/* Filter toggle */}
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onToggleFilters}
-            className="
-              size-9
-              rounded-full
-              text-muted-foreground
-              hover:bg-muted
-              hover:text-foreground
-            "
-            aria-label={
-              filtersOpen ? "Close filters" : "Open filters"
-            }
-          >
-            {filtersOpen ? (
-              <X className="size-[18px]" />
-            ) : (
-              <SlidersHorizontal className="size-[18px]" />
-            )}
-          </Button>
+          
+
+          {/* Cart */}
+          <CartButton />
 
           {/* User */}
           {!isLoaded ? (

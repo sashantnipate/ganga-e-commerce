@@ -10,6 +10,7 @@
   
   /* Font */
   --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
 }
 
 [data-theme='dark'] {

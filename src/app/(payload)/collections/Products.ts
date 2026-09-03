@@ -3,6 +3,9 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 export const Products: CollectionConfig = {
   slug: 'products',
+  access: {
+    read: () => true
+  },
   admin: {
     useAsTitle: 'name',
   },
@@ -47,5 +50,6 @@ export const Products: CollectionConfig = {
       type: 'richText',
       editor: lexicalEditor()
     },
+    
   ],
 }
